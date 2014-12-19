@@ -1,5 +1,6 @@
 ### Genetic Sudoku
 
+This code instents to create sudoku solutions using Artificial Intelligence.
 
 ### Requeriments
 
@@ -9,7 +10,7 @@
 
 ### Approach
 
-A genetic algorithm is a general way to solve optimization problems.
+A genetic algorithm is a general way to solve optimization problems. 
 
     1. Create a population f random solutions
     2. Pick some some solutions and sort it by the fitness function
