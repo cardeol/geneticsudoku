@@ -8,7 +8,11 @@
         }
 
         var plugin = this;
-        var table, selected;
+        var table, 
+            selected = {
+              row: 0,
+              col: 0
+            };
 
         plugin.settings = {}
 
@@ -36,7 +40,11 @@
             table = $(createTable(plugin.settings.grid));
             $element.html(table);
             table.find("td").on("click",function() {
-                $(this).css("background-color","#00B");
+                console.log(selected);
+                table.find("td[data-row='" + selected.row + "'][data-col='" + selected.row + "']").css("background-color","");
+                selected.row = $(this).data("row");
+                selected.col = $(this).data("col");
+                $(this).css("background-color","#AAB");
             });        
         }
       
