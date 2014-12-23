@@ -98,22 +98,27 @@ function GeneticSudoku(original) {
             }
             return valid.length;
 
-        },
+        },        
         addRandom: function(maxnum) {
-            if(gridCount()==0) return false;
-            var n,rr,rc,failsafe = 0;
-            var orig = arr_copy(grid);
-            var num = maxnum ? maxnum : 1;            
-            for(var i=1; i<=num; i++) {
-                failsafe = 0;
+            var valid = [];
+            var n,rr,rc,pos;
+            var failsafe = 0;
+            var max = maxnum ? maxnum : 1;
+            for(var r=0; r<9; r++)
+                for(var c=0; c<9; c++) 
+                    if(grid[r][c] == 0) 
+                        valid.push({row: r, col: c});   
+            while(valid.length>0 && max>0 && failsafe<3000) {                
                 do {
                     n = getRandomNumber() + 1;
-                    rr = getRandomNumber();
-                    rc = getRandomNumber();
-                    failsafe++;                    
-                } while (!checkGrid(rr,rc,n) && failsafe<3000);
-                grid[rr][rc] = n;
-            }             
+                    pos = getRandomNumber(valid.length);
+                } while(!checkGrid(valid[pos].row,valid[pos].col,n) && failsafe<3000);
+                if(failsafe<3000) {
+                    grid[valid[pos].row][valid[pos].col] = n;
+                    valid.splice(pos,1);
+                    max--;
+                }
+            }
             return true;
         },
         getDispersion: function() {
@@ -176,7 +181,7 @@ var MAIN = (function(){
         console.log("candidate found");
         grid.setGrid(partial);    
         disp = grid.getDispersion();
-    } while(disp>=2.3);
+    } while(disp>=10);
     c = grid.count();
     grid.display();        
     console.log("dispersion: " + disp,"count: " + c);
