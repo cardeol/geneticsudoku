@@ -8,19 +8,35 @@
         }
 
         var plugin = this;
+        var table, selected;
 
         plugin.settings = {}
 
         var $element = $(element),  
              element = element;
 
+        var createTable = function(tablegrid) {
+          var t = '<table class="sudoku">';
+          for(var r=0; r<9; r++) {
+              t = t + '<tr>';
+              for(var c=0; c<9; c++) {
+                t = t + '<td data-row="' + r + '" data-col="' + c + '">' + tablegrid[r][c] + '</td>';
+              }              
+              t = t + '</tr>';
+          } 
+          t = t + '</table>';
+          return t;
+        }
+
+
         plugin.init = function() {
             // the plugin's final properties are the merged default and user-provided options (if any)
             plugin.settings = $.extend({}, defaults, options);
-            var $table = $("<table><tr><td></td></tr></table>");
-            $element.html($table);
-            $element.on("click",function() {
-               
+            
+            table = $(createTable(plugin.settings.grid));
+            $element.html(table);
+            table.find("td").on("click",function() {
+                $(this).css("background-color","#00B");
             });        
         }
       
@@ -28,9 +44,7 @@
            alert($element.html());
         }
 
-        var myPrivateMethod = function() {
-
-        }
+        
 
         plugin.init();
     }
