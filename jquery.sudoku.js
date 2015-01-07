@@ -10,9 +10,10 @@
         var plugin = this;
         var table, 
             panel,
+            fixed = [],
             selected = {
-              row: 0,
-              col: 0
+              row: -1,
+              col: -1
             };
 
         plugin.settings = {}
@@ -22,13 +23,13 @@
 
         var createTable = function(tablegrid) {
           var t = '<table class="sudoku">';
-          var ch = '';
+          var ch;
           for(var r=0; r<9; r++) {
               t = t + '<tr>';
               for(var c=0; c<9; c++) {
                 ch = tablegrid[r][c];
-                if(ch=='0') ch='&nbsp;';
-                t = t + '<td data-fixed="false" data-row="' + r + '" data-col="' + c + '">' +  ch + '</td>';
+                if(ch=='0') ch='&nbsp;'; else fixed[r + c + ''] = 1;
+                t = t + '<td>' +  ch + '</td>';
               }              
               t = t + '</tr>';
           } 
@@ -43,25 +44,37 @@
           return t;
         }
 
+        var Render = function(tablegrid) {
+            var ch;
+            for(var r=0; r<9; r++) {
+                for(var c=0; c<9; c++) {
+                  ch = tablegrid[r][c];
+                  if(ch=="0") ch = "&nbsp;";
+                  table.find('tr:eq(' + r + ')').find('td:eq(' + c + ')').html(ch);
+                }
+            }
+        };
 
         plugin.init = function() {
             // the plugin's final properties are the merged default and user-provided options (if any)
-            plugin.settings = $.extend({}, defaults, options);
-            
+            plugin.settings = $.extend({}, defaults, options);            
             table = $(createTable(plugin.settings.grid));
             panel = $(createPanel());
             $element.html(table);
             $element.append(panel);
             table.find("td").on("click",function() {
-                console.log(selected);                
-                table.find("td[data-row='" + selected.row + "'][data-col='" + selected.row + "']").css("background-color","");
-                selected.row = $(this).data("row");
-                selected.col = $(this).data("col");
-                if($(this).data("fixed")=="true") return false;
-                $(this).css("background-color","#AAB");
+              if(typeof fixed[selected.row + selected.col + ''] != "undefined") return false;
+              if(selected.row!=-1) table.find('tr:eq(' + selected.row + ')').find('td:eq(' + selected.col + ')').css("background-color","");
+              selected.col = $(this).parent().children().index(this);
+              selected.row = $(this).parent().parent().children().index(this.parentNode);
+              $(this).css("background-color","#AAB");
             });        
             panel.find("td").on("click",function() {
-                
+                var n = $(this).html();
+                if(selected.row==-1) return false;
+                if(fixed[selected.row + selected.col + ''] == 1) return false;
+                plugin.settings.grid[selected.row][selected.col] = n;
+                Render(plugin.settings.grid);
             });
         }
       
