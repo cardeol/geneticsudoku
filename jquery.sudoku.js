@@ -44,13 +44,17 @@
           return t;
         }
 
-        var Render = function(tablegrid) {
-            var ch;
+        var Render = function(n) {
+            var ch,elem;
+            if(typeof n == "undefined") n = -1;
             for(var r=0; r<9; r++) {
                 for(var c=0; c<9; c++) {
-                  ch = tablegrid[r][c];
+                  ch = plugin.settings.grid[r][c];
                   if(ch=="0") ch = "&nbsp;";
-                  table.find('tr:eq(' + r + ')').find('td:eq(' + c + ')').html(ch);
+                  elem = table.find('tr:eq(' + r + ')').find('td:eq(' + c + ')');
+                  elem.removeClass("ll");
+                  elem.html(ch);
+                  if(ch==n) elem.addClass("ll");
                 }
             }
         };
@@ -64,25 +68,23 @@
             $element.append(panel);
             table.find("td").on("click",function() {
               if(typeof fixed[selected.row + selected.col + ''] != "undefined") return false;
-              if(selected.row!=-1) table.find('tr:eq(' + selected.row + ')').find('td:eq(' + selected.col + ')').css("background-color","");
+              if(selected.row!=-1) table.find('tr:eq(' + selected.row + ')').find('td:eq(' + selected.col + ')').removeClass("hl");
               selected.col = $(this).parent().children().index(this);
               selected.row = $(this).parent().parent().children().index(this.parentNode);
-              $(this).css("background-color","#AAB");
+              $(this).addClass("hl");              
             });        
             panel.find("td").on("click",function() {
                 var n = $(this).html();
                 if(selected.row==-1) return false;
                 if(fixed[selected.row + selected.col + ''] == 1) return false;
                 plugin.settings.grid[selected.row][selected.col] = n;
-                Render(plugin.settings.grid);
+                Render(n);
             });
         }
       
         plugin.myPublicMethod = function() {
            alert($element.html());
         }
-
-        
 
         plugin.init();
     }

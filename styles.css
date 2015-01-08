@@ -19,3 +19,11 @@ table.sudoku tr:first-child {
 table.sudoku tr:nth-child(3n) td {
   border-bottom:solid ;
 }
+
+table.sudoku tr td.hl {
+	background-color: "#AAB";
+}
+
+table.sudoku tr td.ll {
+	background-color: "#ECE";
+}
